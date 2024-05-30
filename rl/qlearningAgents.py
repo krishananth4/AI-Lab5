@@ -87,7 +87,11 @@ class QLearningAgent(ReinforcementAgent):
         legal_actions = self.getLegalActions(state)
         if not legal_actions:
             return 0.0
-        maxQValue = max(self.getQValue(state, action) for action in legal_actions)
+        maxQValue = 0.0
+        for action in legal_actions:
+            tempNum = self.getQValue(state,action)
+            if tempNum > maxQValue:
+                maxQValue = tempNum
         return maxQValue
         util.raiseNotDefined()
 
@@ -98,6 +102,15 @@ class QLearningAgent(ReinforcementAgent):
           you should return None.
         """
         "*** YOUR CODE HERE ***"
+        legal_actions = self.getLegalActions(state)
+        if not legal_actions:
+            return None
+        # Get the maximum Q-value among legal actions
+        maxQValue = self.computeValueFromQValues(state)
+        # Collect all actions that have the maximum Q-value
+        bestActions = [action for action in legal_actions if self.getQValue(state, action) == maxQValue]
+        # Return a randomly chosen action among the best actions
+        return random.choice(bestActions)
         # YL: if there are multiple best actions, then choose a random one
         util.raiseNotDefined()
 
