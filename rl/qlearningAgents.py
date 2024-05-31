@@ -147,13 +147,19 @@ class QLearningAgent(ReinforcementAgent):
         action = None
         "*** YOUR CODE HERE ***"
         
+        # Do a coinflip
         if util.flipCoin(self.epsilon):
+          # If legalActions has items in it
           if legalActions:
+            # Choose a random action from the legal list
             action = random.choice(legalActions)
+            # (If legalActions was empty its action would not be updated, leaving it at None, which is what gets returned)
         else:
+          # Does the best policy action if the coinflip was false
           action = self.getPolicy(state)
         # util.raiseNotDefined()
 
+        # Returns either a [random action/None] or [best action] depending on the coinflip
         return action
 
     def update(self, state, action, nextState, reward):
