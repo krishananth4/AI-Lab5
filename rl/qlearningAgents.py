@@ -62,7 +62,6 @@ class QLearningAgent(ReinforcementAgent):
           or the Q node value otherwise
         """
         "*** YOUR CODE HERE ***"
-        q_value = 0
         #util.raiseNotDefined()
         # The (state, action) key is cross-checked in the qvalues dictionary, if the (state, action) key is present in the qvalues dictionary, we return the particular Q-value present
         if (state,action) in self.qvalues: # (state,action) is the key; (s,a) is the key (s,a): 0.5
