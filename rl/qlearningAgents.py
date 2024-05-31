@@ -148,7 +148,8 @@ class QLearningAgent(ReinforcementAgent):
         "*** YOUR CODE HERE ***"
         
         if util.flipCoin(self.epsilon):
-          action = random.choice(legalActions)
+          if legalActions:
+            action = random.choice(legalActions)
         else:
           action = self.getPolicy(state)
         # util.raiseNotDefined()
