@@ -64,10 +64,12 @@ class QLearningAgent(ReinforcementAgent):
         "*** YOUR CODE HERE ***"
         q_value = 0
         #util.raiseNotDefined()
+        # The (state, action) key is cross-checked in the qvalues dictionary, if the (state, action) key is present in the qvalues dictionary, we return the particular Q-value present
         if (state,action) in self.qvalues: # (state,action) is the key; (s,a) is the key (s,a): 0.5
             # return the associated q-value
             test = 0 # just for testing
             return self.qvalues[(state,action)]
+        # Otherwise, if the (state, action) key is not present in the qvalues dictionary, we return a default Q-value of float 0.0
         else:
             test = 0 # just for testing
             # update the dictionary self.qvalues with this unseen (s,a) and initialize its value as 0.0
@@ -84,14 +86,22 @@ class QLearningAgent(ReinforcementAgent):
           terminal state, you should return a value of 0.0.
         """
         "*** YOUR CODE HERE ***"
+        # Get all of the possible legal actions in a particular state using the getLegalActions() method 
         legal_actions = self.getLegalActions(state)
+        # If there are no legal actions to take at a particular state, return float 0.0 as the Q-value
         if not legal_actions:
             return 0.0
-        maxQValue = 0.0
+        # initialize the maxQvalue to -infinity because you want the smallest possible value so that you can work against it
+        maxQValue = float('-inf')
+        # Iterate over all the legal actions that we have at a particular state
         for action in legal_actions:
-            tempNum = self.getQValue(state,action)
-            if tempNum > maxQValue:
-                maxQValue = tempNum
+            # retrieve the Q-value
+            q_value = self.getQValue(state,action)
+            # if the current iterations Q-value is greater than the maximum Q-value that is in place...
+            if q_value > maxQValue:
+                # Set the Q-value as the maximum Q-value 
+                maxQValue = q_value
+        # return the maximum Q-value as a result of this method
         return maxQValue
         util.raiseNotDefined()
 
@@ -102,13 +112,21 @@ class QLearningAgent(ReinforcementAgent):
           you should return None.
         """
         "*** YOUR CODE HERE ***"
+        # Get all of the possible legal actions in a particular state using the getLegalActions() method 
         legal_actions = self.getLegalActions(state)
+        # If there are no legal actions to take at a particular state, return float None as the action
         if not legal_actions:
             return None
-        # Get the maximum Q-value among legal actions
+        # Get the maximum Q-value among legal actions, which is produced by the computeValueFromQValues() method
         maxQValue = self.computeValueFromQValues(state)
         # Collect all actions that have the maximum Q-value
-        bestActions = [action for action in legal_actions if self.getQValue(state, action) == maxQValue]
+        bestActions = []
+        # Iterate through all the legal actions present at a particular state
+        for action in legal_actions:
+          # if the Q-value at a particular state and action is the maximum Q-value
+          if self.getQValue(state, action) == maxQValue:
+            # append the action that we take to the bestActions list (so we store the best particular action an agent can take to maximize the reward)
+            bestActions.append(action)
         # Return a randomly chosen action among the best actions
         return random.choice(bestActions)
         # YL: if there are multiple best actions, then choose a random one
@@ -142,8 +160,14 @@ class QLearningAgent(ReinforcementAgent):
         """
         "*** YOUR CODE HERE ***"
         #util.raiseNotDefined()
-        
-        # self.qvalues[(state,action)] = ...
+        # The maximum Q-value is extracted by crosschecking all of the possible Q-values by way of all current legal actions in a particular state (which is done through the computeValueFromQValue method)
+        max_Qval = self.computeValueFromQValues(nextState)
+        # The current Q-value is taken from the getQValue method that has been implemented (This will be considered as the old value when it comes to the Q-Learning Formula)
+        current_Qval = self.getQValue(state, action)
+        # The updated Q-value is then updated/calculated by using the general formula: Q(s,a) <-- (1 - alpha) Q(s,a) + alpha(reward + discount(max(Q-value)))
+        updated_Qval = (1 - self.alpha) * (current_Qval) + (self.alpha) * (reward + self.discount * max_Qval)
+        # The method performs the intended process by updating the q value as an action is taken to a particular state
+        self.qvalues[(state,action)] = updated_Qval
 
     def getPolicy(self, state):
         return self.computeActionFromQValues(state)
